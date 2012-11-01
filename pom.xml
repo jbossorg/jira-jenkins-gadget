@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jboss.jira.plugin</groupId>
+  <artifactId>build-gadgets</artifactId>
+  <version>1.0</version>
+  <packaging>atlassian-plugin</packaging>
+
+  <name>Gadgets to show hudson.jboss.org builds</name>
+  <description>Contains gadget that allows to show status of defined build from hudson.jboss.org hosted Jenkins server.</description>
+
+  <organization>
+    <name>Red Hat</name>
+    <url>http://www.redhat.com/</url>
+  </organization>
+
+  <developers>
+    <developer>
+      <name>Vlastimil Elias</name>
+      <organization>Red Hat</organization>
+      <id>velias</id>
+      <email>velias@redhat.com</email>
+    </developer>
+  </developers>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jira.version>5.1</jira.version>
+    <jira.data.version>5.1</jira.data.version>
+    <java.version>1.6</java.version>
+    <atlassian.plugin.version>3.1.1</atlassian.plugin.version>
+  </properties>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.atlassian.maven.plugins</groupId>
+        <artifactId>maven-jira-plugin</artifactId>
+        <version>${atlassian.plugin.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <productVersion>${jira.version}</productVersion>
+          <productDataVersion>${jira.data.version}</productDataVersion>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>maven-jira-plugin</artifactId>
+                    <versionRange>[3.1.1,)</versionRange>
+                    <goals>
+                      <goal>copy-bundled-dependencies</goal>
+                      <goal>filter-plugin-descriptor</goal>
+                      <goal>generate-manifest</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>atlassian-public</id>
+      <url>https://m2proxy.atlassian.com/repository/public</url>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+      <snapshots>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+    
+</project>

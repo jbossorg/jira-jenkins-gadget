@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+  <ModulePrefs
+        title="Build Status"
+        author="Vlastimil Eliáš"
+        author_email="velias@redhat.com"
+        description="This gadget allows to show status of defined build from hudson.jboss.org hosted Jenkins server."
+        screenshot="__ATLASSIAN_BASE_URL__/download/resources/org.jboss.jira.plugin.build-gadgets/thumbnails/screenshot.png"
+        thumbnail="__ATLASSIAN_BASE_URL__/download/resources/org.jboss.jira.plugin.build-gadgets/thumbnails/thumbnail.png">
+    <Optional feature="gadget-directory">
+      <Param name="categories">Other</Param>
+    </Optional>    
+    <Require feature="dynamic-height" />
+    <Require feature="setprefs" />
+    <Require feature="views" />
+  </ModulePrefs> 
+  <UserPref name="jenkins_job_name" display_name="Jenkins Job name" datatype="string" required="true" />
+  <Content type="html"><![CDATA[
+<style type="text/css">
+
+  .jobtitleInner {
+    padding: 5px;
+  }
+  
+  .jobtitleInner a {
+    color: #000000;
+    text-decoration: none;
+  }
+  
+  .jobtitleInner a:hover {
+    text-decoration: underline;
+  }
+  
+  #jobdetails {
+    display: table;
+    font-size: 12px;
+    padding: 10px;
+    width: 100%;
+  }
+  
+  #jobdetails div {
+    float: left;
+    width: 33%;
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+    font-size: 12px;
+  }
+  
+  #jobdetails a {
+    color: #003366;
+    text-decoration: none;
+  }
+  
+  #jobdetails a:hover {
+    text-decoration: underline;
+  }
+  
+  .clear { clear: both;}
+</style>
+  
+<div>
+  <div>
+    <div id='jobtitle' width='100%' align='center'></div>
+    <div id='jobdetails' width='100%'>Loading build status...</div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  var prefs = new gadgets.Prefs();
+
+  function init() {
+    var jobname = prefs.getString("jenkins_job_name");
+    if (jobname && jobname.length > 0 ){
+      document.getElementById('jobtitle').innerHTML = "<div class='jobtitleInner'>"+getJobTitleHTML()+"</div>";
+      gadgets.window.adjustHeight();
+      makeJSONRequest();
+    } else {
+      document.getElementById('jobdetails').innerHTML = "Configure job name in gadget preferences please.";
+      gadgets.window.adjustHeight();
+    }
+  }
+  
+  function makeJSONRequest() {
+    var params = {};
+    params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+    var ts = new Date().getTime();
+    var url = getJobURL() + "/api/json?nocache="+Math.floor(ts / 10000);
+    gadgets.io.makeRequest(url, response, params);
+  };
+  
+  function response(obj) { 
+    if (obj.data) {
+      var jsondata = obj.data;
+      var clr = jsondata.color;
+      if (clr=='blue')
+        clr = '#00FF00';
+      document.getElementById('jobtitle').innerHTML = "<div width='100%' class='jobtitleInner' style='background-color:"+clr+";text-align:center' >"+getJobTitleHTML()+"</div>";
+      var html = "";
+      for (var i in jsondata.healthReport){
+          html = html + jsondata.healthReport[i].description + "<br/>"; 
+      }
+      html = html + "<div>Last build: " + getBuildHTML(jsondata.lastBuild) + "</div>";
+      html = html + "<div align='center'>Last successful build: " + getBuildHTML(jsondata.lastSuccessfulBuild) + "</div>";
+      html = html + "<div align='center'>Last stable build: " + getBuildHTML(jsondata.lastStableBuild) + "</div>";
+      document.getElementById('jobdetails').innerHTML = html;
+    } else if (obj.errors && obj.errors.length > 0) {
+      document.getElementById('jobdetails').innerHTML = "Build status loading error: " + obj.errors + "<br/>Response content: " + obj.text;  
+    } else {
+      document.getElementById('jobdetails').innerHTML = "Build status loading error.<br/>Response content: " + obj.text;
+    }
+    gadgets.window.adjustHeight();
+  };
+   
+  function getJobURL(){
+    return "http://hudson.jboss.org/hudson/job/" + prefs.getString("jenkins_job_name");
+  }
+   
+  function getJobTitleHTML(){
+     return "<strong><a href='" + getJobURL() + "' target='_blank'>" + prefs.getString("jenkins_job_name") + "</a></strong>";
+  }
+   
+  function getBuildHTML(build){
+     if (build)
+       return "<a href='" + build.url + "' target='_blank'>" + build.number + "</a>";
+     else
+       return "--";  
+  }
+  
+  gadgets.util.registerOnLoadHandler(init);
+
+</script>]]></Content>
+</Module>

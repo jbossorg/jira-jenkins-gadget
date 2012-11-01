@@ -1,0 +1,12 @@
+<atlassian-plugin key="org.jboss.jira.plugin.build-gadgets" name="${project.name}"
+  plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <version>${project.version}</version>
+    <vendor name="${project.organization.name}" url="${project.organization.url}" />
+  </plugin-info>
+  
+  <gadget key="build-status-gadget" location="gadget.xml"/>
+  <resource type="download" namePattern="thumbnails/" location="thumbnails/"/>
+
+</atlassian-plugin>
