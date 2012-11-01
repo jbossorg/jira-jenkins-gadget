@@ -5,8 +5,8 @@ This is a plugin for Atlassian JIRA with gadget that allows to show status of de
 
 Installation
 -------------
-This plugin is Type 2, so can be installed and upgraded directly from JIRA Administration GUI (over UPM) 
-You have to add `http://hudson.jboss.org/*` to the JIRA [Whitelist](https://confluence.atlassian.com/display/JIRA/Configuring+the+Whitelist) also.
+* This plugin is Type 2, so can be installed and upgraded directly from JIRA Administration GUI (over UPM) 
+* You have to add `http://hudson.jboss.org/*` to the JIRA [Whitelist](https://confluence.atlassian.com/display/JIRA/Configuring+the+Whitelist) also.
 
 Build
 -------------
@@ -19,6 +19,7 @@ Plugin .jar file is then placed in /target subfolder
 License
 -------------
 GNU Lesser General Public License Version 2.1
+
 http://www.gnu.org/licenses/lgpl-2.1-standalone.html
 
 
