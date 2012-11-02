@@ -26,5 +26,9 @@ http://www.gnu.org/licenses/lgpl-2.1-standalone.html
 Changelog
 -------------
 
+1.1 - 2012-11-02
+- Help message for unconfigured gadget improved
+- Design improved, collors are not so aggresive
+
 1.0 - 2012-11-01
 - first release

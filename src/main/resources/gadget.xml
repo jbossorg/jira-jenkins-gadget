@@ -14,14 +14,26 @@
     <Require feature="setprefs" />
     <Require feature="views" />
   </ModulePrefs> 
-  <UserPref name="jenkins_job_name" display_name="Jenkins Job name" datatype="string" required="true" />
+  <UserPref name="jenkins_job_name" display_name="Jenkins Job name" datatype="string" required="true"/>
   <Content type="html"><![CDATA[
 <style type="text/css">
 
-  .jobtitleInner {
-    padding: 5px;
+  #wrapper {
+    margin: 5px 10px 0px 10px;
   }
-  
+
+  .jobtitleInner {
+    margin: 0px 0px 10px 0px;
+    text-align: center;
+    padding: 8px 35px 8px 14px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    background-color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+  }
+
   .jobtitleInner a {
     color: #000000;
     text-decoration: none;
@@ -30,11 +42,28 @@
   .jobtitleInner a:hover {
     text-decoration: underline;
   }
+    
+  .statusblue, .statusblue a {
+    color: #468847;
+    background-color: #DFF0D8;
+    border-color: #D6E9C6;
+  }
   
+  .statusred, .statusred a {
+    color: #B94A48;
+    background-color: #F2DEDE;
+    border-color: #EED3D7;
+  }
+
+  .statusyellow, .statusyellow a {
+    color: #C09853;
+    background-color: #FCF8E3;
+    border-color: #FBEED5;
+  }
+    
   #jobdetails {
     display: table;
     font-size: 12px;
-    padding: 10px;
     width: 100%;
   }
   
@@ -59,11 +88,9 @@
   .clear { clear: both;}
 </style>
   
-<div>
-  <div>
+<div id='wrapper'>
     <div id='jobtitle' width='100%' align='center'></div>
     <div id='jobdetails' width='100%'>Loading build status...</div>
-  </div>
 </div>
 
 <script type='text/javascript'>
@@ -76,7 +103,7 @@
       gadgets.window.adjustHeight();
       makeJSONRequest();
     } else {
-      document.getElementById('jobdetails').innerHTML = "Configure job name in gadget preferences please.";
+      document.getElementById('jobdetails').innerHTML = "Configure job name in gadget preferences please. Look for job name at <a target='_blank' href='http://hudson.jboss.org/hudson'>http://hudson.jboss.org/hudson</a>, job name is something like <code>as7-master-build</code> or <code>jbosstools-4.0_trunk.component--ws</code> etc.";
       gadgets.window.adjustHeight();
     }
   }
@@ -92,17 +119,14 @@
   function response(obj) { 
     if (obj.data) {
       var jsondata = obj.data;
-      var clr = jsondata.color;
-      if (clr=='blue')
-        clr = '#00FF00';
-      document.getElementById('jobtitle').innerHTML = "<div width='100%' class='jobtitleInner' style='background-color:"+clr+";text-align:center' >"+getJobTitleHTML()+"</div>";
+      document.getElementById('jobtitle').innerHTML = "<div width='100%' class='jobtitleInner status"+jsondata.color+"'>"+getJobTitleHTML()+"</div>";
       var html = "";
       for (var i in jsondata.healthReport){
           html = html + jsondata.healthReport[i].description + "<br/>"; 
       }
       html = html + "<div>Last build: " + getBuildHTML(jsondata.lastBuild) + "</div>";
       html = html + "<div align='center'>Last successful build: " + getBuildHTML(jsondata.lastSuccessfulBuild) + "</div>";
-      html = html + "<div align='center'>Last stable build: " + getBuildHTML(jsondata.lastStableBuild) + "</div>";
+      html = html + "<div align='right'>Last stable build: " + getBuildHTML(jsondata.lastStableBuild) + "</div>";
       document.getElementById('jobdetails').innerHTML = html;
     } else if (obj.errors && obj.errors.length > 0) {
       document.getElementById('jobdetails').innerHTML = "Build status loading error: " + obj.errors + "<br/>Response content: " + obj.text;  
