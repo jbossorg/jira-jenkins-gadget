@@ -6,11 +6,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.jira.plugin</groupId>
   <artifactId>build-gadgets</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
   <packaging>atlassian-plugin</packaging>
 
-  <name>Gadgets to show hudson.jboss.org builds</name>
-  <description>Contains gadget that allows to show status of defined build from hudson.jboss.org hosted Jenkins server.</description>
+  <name>Gadget to show Jenkins/Hudson build status</name>
+  <description>This is a plugin for Atlassian JIRA with Gadget that allows to show status of defined build from Jenkins/Hudson server on JIRA Dashboard and other Gadget containers.</description>
 
   <organization>
     <name>Red Hat</name>
