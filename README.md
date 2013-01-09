@@ -32,6 +32,9 @@ http://www.gnu.org/licenses/lgpl-2.1-standalone.html
 Changelog
 -------------
 
+1.3 - 2013-01-09
+* #1 bugfix - patched problem with job names containing characters with special meaning in URLs  
+
 1.2 - 2012-12-14
 * Jenkins/Hudson server URL can be configured in Gadget preferences now, hudson.jboss.org is default if not specified
 * Title of gadget is changed to show configured job name 

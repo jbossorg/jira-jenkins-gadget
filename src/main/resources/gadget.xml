@@ -146,7 +146,7 @@
     } else {
       surl = "http://hudson.jboss.org/hudson/";
     }
-    return surl + "job/" + prefs.getString("jenkins_job_name");
+    return surl + "job/" + encodeURIComponent(prefs.getString("jenkins_job_name"));
   }
    
   function getJobTitleHTML(){
