@@ -17,6 +17,8 @@
     </ModulePrefs>
     <UserPref name="jenkins_job_name" display_name="Jenkins/Hudson Job name" datatype="string" required="true" />
     <UserPref name="jenkins_url" display_name="Jenkins/Hudson server URL (default hudson.jboss.org)" datatype="string" default_value="http://hudson.jboss.org/hudson" />
+    <UserPref name="last_job_details" display_name="Load last build details" datatype="bool" default_value="false"/>
+    <UserPref name="last_job_details_changeset" display_name="Show last build details changeset" datatype="bool" default_value="false"/>
     <Content type="html"><![CDATA[<style type="text/css">
 
   #wrapper {
@@ -62,7 +64,7 @@
     border-color: #FBEED5;
   }
     
-  #jobdetails {
+  #jobdetails, #lastjobdetails {
     display: table;
     font-size: 12px;
     width: 100%;
@@ -86,12 +88,18 @@
     text-decoration: underline;
   }
   
+  ul {
+    margin-top: 2px;
+    margin-bottom: 0px;
+  }
+  
   .clear { clear: both;}
 </style>
   
 <div id='wrapper'>
     <div id='jobtitle' width='100%' align='center'></div>
     <div id='jobdetails' width='100%'>Loading build status...</div>
+    <div id='lastjobdetails' width='100%'></div>
 </div>
 
 <script type='text/javascript'>
@@ -103,22 +111,22 @@
       document.getElementById('jobtitle').innerHTML = "<div class='jobtitleInner'>"+getJobTitleHTML()+"</div>";
       gadgets.window.setTitle("Build Status - " + prefs.getString("jenkins_job_name"));
       gadgets.window.adjustHeight();
-      makeJSONRequest();
+      makeJSONRequest(getJobURL(),responseMain);
     } else {
       document.getElementById('jobdetails').innerHTML = "Configure Jenkins/Hudson job name in gadget preferences please. Look for job name at Jenkins/Hudson server (eg. <a target='_blank' href='http://hudson.jboss.org/hudson'>http://hudson.jboss.org/hudson</a>), job name is something like <code>as7-master-build</code> or <code>jbosstools-4.0_trunk.component--ws</code> etc.";
       gadgets.window.adjustHeight();
     }
   }
   
-  function makeJSONRequest() {
+  function makeJSONRequest(baseurl, response) {
     var params = {};
     params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
     var ts = new Date().getTime();
-    var url = getJobURL() + "/api/json?nocache="+Math.floor(ts / 10000);
+    var url = baseurl + "/api/json?nocache="+Math.floor(ts / 10000);
     gadgets.io.makeRequest(url, response, params);
   };
   
-  function response(obj) { 
+  function responseMain(obj) { 
     if (obj.data) {
       var jsondata = obj.data;
       document.getElementById('jobtitle').innerHTML = "<div width='100%' class='jobtitleInner status"+jsondata.color+"'>"+getJobTitleHTML()+"</div>";
@@ -130,6 +138,9 @@
       html = html + "<div align='center'>Last successful build: " + getBuildHTML(jsondata.lastSuccessfulBuild) + "</div>";
       html = html + "<div align='right'>Last stable build: " + getBuildHTML(jsondata.lastStableBuild) + "</div>";
       document.getElementById('jobdetails').innerHTML = html;
+      if (prefs.getBool("last_job_details")){
+        makeJSONRequest(getJobURL()+"/"+jsondata.lastBuild.number,responseLastBuild);
+      }
     } else if (obj.errors && obj.errors.length > 0) {
       document.getElementById('jobdetails').innerHTML = "Build status loading error: " + obj.errors + "<br/>Response content: " + obj.text;  
     } else {
@@ -137,6 +148,47 @@
     }
     gadgets.window.adjustHeight();
   };
+  
+  function responseLastBuild(obj) { 
+    if (obj.data) {
+      var jsondata = obj.data;
+      var html = ""; 
+      if (jsondata.timestamp)
+        html = html + "Last build date: " + dateFormat(new Date(jsondata.timestamp)) + "<br/>";
+      if (jsondata.duration)
+        html = html + "Last build duration: " + formatDuration(jsondata.duration) + "<br/>";
+      if (prefs.getBool("last_job_details_changeset") && jsondata.changeSet && jsondata.changeSet.items && jsondata.changeSet.items.length > 0){
+        html = html + "Last build changeset: <ul>";
+        for(item in jsondata.changeSet.items){
+          html = html + "<li>" + jsondata.changeSet.items[item].msg;
+        }
+        html = html + "</ul>";
+      }  
+      document.getElementById('lastjobdetails').innerHTML = html;
+    } else if (obj.errors && obj.errors.length > 0) {
+      document.getElementById('lastjobdetails').innerHTML = "Last build info loading error: " + obj.errors + "<br/>Response content: " + obj.text;  
+    } else {
+      document.getElementById('lastjobdetails').innerHTML = "Last build info loading error.<br/>Response content: " + obj.text;
+    }
+    gadgets.window.adjustHeight();
+  }
+  
+  function dateFormat(date) {
+    return date.toLocaleString();
+  };
+  
+  function formatDuration(millis){
+    var html = "";
+    var dd = new Date(millis);
+    if (dd.getUTCDate()>1)
+      html = html + (dd.getUTCDate()-1)+" day ";
+    if (dd.getUTCHours()>0)
+      html = html + dd.getUTCHours()+" hour ";
+    if (dd.getUTCMinutes()>0)
+      html = html + dd.getUTCMinutes()+" min ";
+    html = html + dd.getUTCSeconds()+" sec";
+    return html;
+  }
    
   function getJobURL(){
     var surl = prefs.getString("jenkins_url");

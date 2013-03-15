@@ -32,6 +32,11 @@ http://www.gnu.org/licenses/lgpl-2.1-standalone.html
 Changelog
 -------------
 
+1.4 - 2013-03-15
+* ORG-1624 - gadget is capable to show "last build" detail informations (date, duration, changelog). 
+  Separate REST call is necessary to obtain the details, so this feature is optional, 
+  you have to enable it in gadget configuration.
+
 1.3 - 2013-01-09
 * #1 bugfix - patched problem with job names containing characters with special meaning in URLs  
 
