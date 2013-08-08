@@ -19,6 +19,15 @@
     <UserPref name="jenkins_url" display_name="Jenkins/Hudson server URL (default hudson.jboss.org)" datatype="string" default_value="http://hudson.jboss.org/hudson" />
     <UserPref name="last_job_details" display_name="Load last build details" datatype="bool" default_value="false"/>
     <UserPref name="last_job_details_changeset" display_name="Show last build details changeset" datatype="bool" default_value="false"/>
+    <UserPref name="refreshinterval" display_name="Refresh interval" datatype="enum" default_value="">
+      <EnumValue value="" display_value="Never"/>
+      <EnumValue value="1" display_value="1 minute"/>
+      <EnumValue value="2" display_value="2 minutes"/>
+      <EnumValue value="5" display_value="5 minutes"/>
+      <EnumValue value="10" display_value="10 minutes"/>
+      <EnumValue value="15" display_value="15 minutes"/>
+      <EnumValue value="30" display_value="30 minutes"/>
+    </UserPref>
     <Content type="html"><![CDATA[<style type="text/css">
 
   #wrapper {
@@ -70,6 +79,12 @@
     width: 100%;
   }
   
+  #gupdated {
+    font-size: 9px;
+    color: #707070;
+    width: 100%;
+  }
+  
   #jobdetails div {
     float: left;
     width: 33%;
@@ -100,6 +115,7 @@
     <div id='jobtitle' width='100%' align='center'></div>
     <div id='jobdetails' width='100%'>Loading build status...</div>
     <div id='lastjobdetails' width='100%'></div>
+    <div id='gupdated' width='100%'></div>
 </div>
 
 <script type='text/javascript'>
@@ -111,11 +127,15 @@
       document.getElementById('jobtitle').innerHTML = "<div class='jobtitleInner'>"+getJobTitleHTML()+"</div>";
       gadgets.window.setTitle("Build Status - " + prefs.getString("jenkins_job_name"));
       gadgets.window.adjustHeight();
-      makeJSONRequest(getJobURL(),responseMain);
+      makeMainJSONRequest();
     } else {
       document.getElementById('jobdetails').innerHTML = "Configure Jenkins/Hudson job name in gadget preferences please. Look for job name at Jenkins/Hudson server (eg. <a target='_blank' href='http://hudson.jboss.org/hudson'>http://hudson.jboss.org/hudson</a>), job name is something like <code>as7-master-build</code> or <code>jbosstools-4.0_trunk.component--ws</code> etc.";
       gadgets.window.adjustHeight();
     }
+  }
+  
+  function makeMainJSONRequest() {
+    makeJSONRequest(getJobURL(),responseMain);
   }
   
   function makeJSONRequest(baseurl, response) {
@@ -142,9 +162,16 @@
         makeJSONRequest(getJobURL()+"/"+jsondata.lastBuild.number,responseLastBuild);
       }
     } else if (obj.errors && obj.errors.length > 0) {
-      document.getElementById('jobdetails').innerHTML = "Build status loading error: " + obj.errors + "<br/>Response content: " + obj.text;  
+      document.getElementById('jobdetails').innerHTML = "Build status loading error: " + obj.errors + "<br/>Response content: " + obj.text;
+      document.getElementById('lastjobdetails').innerHTML = "";  
     } else {
       document.getElementById('jobdetails').innerHTML = "Build status loading error.<br/>Response content: " + obj.text;
+      document.getElementById('lastjobdetails').innerHTML = "";
+    }
+    document.getElementById('gupdated').innerHTML = "Status updated " + dateFormat(new Date());
+    var refreshinterval = prefs.getString("refreshinterval");
+    if (refreshinterval && parseInt(refreshinterval) > 0){
+      window.setTimeout(makeMainJSONRequest, parseInt(refreshinterval) * 60 * 1000);
     }
     gadgets.window.adjustHeight();
   };

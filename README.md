@@ -32,6 +32,9 @@ http://www.gnu.org/licenses/lgpl-2.1-standalone.html
 Changelog
 -------------
 
+1.5
+* #4 enhancement - Automatic build status refresh every X minutes may be set in gadget options 
+
 1.4 - 2013-03-15
 * ORG-1624 - gadget is capable to show "last build" detail informations (date, duration, changelog). 
   Separate REST call is necessary to obtain the details, so this feature is optional, 
