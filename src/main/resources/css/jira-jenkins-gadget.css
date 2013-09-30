@@ -1,0 +1,79 @@
+#wrapper {
+    margin: 5px 10px 0px 10px;
+}
+
+.jobtitleInner {
+    margin: 0px 0px 10px 0px;
+    text-align: center;
+    padding: 8px 35px 8px 14px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    background-color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.jobtitleInner a {
+    color: #000000;
+    text-decoration: none;
+}
+
+.jobtitleInner a:hover {
+    text-decoration: underline;
+}
+
+.statusblue, .statusblue a {
+    color: #468847;
+    background-color: #DFF0D8;
+    border-color: #D6E9C6;
+}
+
+.statusred, .statusred a {
+    color: #B94A48;
+    background-color: #F2DEDE;
+    border-color: #EED3D7;
+}
+
+.statusyellow, .statusyellow a {
+    color: #C09853;
+    background-color: #FCF8E3;
+    border-color: #FBEED5;
+}
+
+#jobdetails, #lastjobdetails {
+    display: table;
+    font-size: 12px;
+    width: 100%;
+}
+
+#gupdated {
+    font-size: 9px;
+    color: #707070;
+    width: 100%;
+}
+
+#jobdetails div {
+    float: left;
+    width: 33%;
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+    font-size: 12px;
+}
+
+#jobdetails a {
+    color: #003366;
+    text-decoration: none;
+}
+
+#jobdetails a:hover {
+    text-decoration: underline;
+}
+
+ul {
+    margin-top: 2px;
+    margin-bottom: 0px;
+}
+
+.clear { clear: both;}
