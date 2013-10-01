@@ -19,7 +19,7 @@ function responseMain(obj) {
         html = html + "<div align='center'>Last successful build: " + buildHTML(jsondata.lastSuccessfulBuild) + "</div>";
         html = html + "<div align='right'>Last stable build: " + buildHTML(jsondata.lastStableBuild) + "</div>";
         document.getElementById('jobdetails').innerHTML = html;
-        if (prefs.getBool("last_job_details")){
+        if ( gadget.getPref("LastJobDetails") ){
             makeJSONRequest(jenkinsJobURL(gadget)+"/"+jsondata.lastBuild.number,responseLastBuild);
         }
     } else if (obj.errors && obj.errors.length > 0) {
@@ -41,7 +41,7 @@ function responseLastBuild(obj) {
             html = html + "Last build date: " + dateFormat(new Date(jsondata.timestamp)) + "<br/>";
         if (jsondata.duration)
             html = html + "Last build duration: " + formatDuration(jsondata.duration) + "<br/>";
-        if (prefs.getBool("last_job_details_changeset") && jsondata.changeSet && jsondata.changeSet.items && jsondata.changeSet.items.length > 0){
+        if ( gadget.getPref("LastJobDetailsChangeSet")  && jsondata.changeSet && jsondata.changeSet.items && (jsondata.changeSet.items.length > 0)){
             html = html + "Last build changeset: <ul>";
             for(item in jsondata.changeSet.items){
                 html = html + "<li>" + jsondata.changeSet.items[item].msg;
@@ -55,7 +55,7 @@ function responseLastBuild(obj) {
         document.getElementById('lastjobdetails').innerHTML = "Last build info loading error.<br/>Response content: " + obj.text;
     }
     gadgets.window.adjustHeight();
-}
+};
 
 function dateFormat(date) {
     return date.toLocaleString();
@@ -76,7 +76,8 @@ function formatDuration(millis){
 
 var jenkinsJobURL = function(gadget){
     var surl =  gadget.getPref("JenkinsURL");
-    if (surl.charAt(surl.length - 1) != "/")
+
+     if (surl.charAt(surl.length - 1) != "/")
         surl = surl + "/";
 
     return surl + "job/" + encodeURIComponent(gadget.getPref("JenkinsJobName"));
@@ -93,11 +94,13 @@ var jenkinsJobTitleHTML = function(){
     return "<strong><a href='" + jenkinsJobURL(gadget) + "' target='_blank'>" + gadget.getPref("JenkinsJobName") + "</a></strong>"+"<img src="+ball_url+" />";
 };
 
-var buildHTML = function(build){
+var buildHTML = function (build) {
     if (build)
         return "<a href='" + build.url + "' target='_blank'>" + build.number + "</a>";
     else
         return "--";
 };
+
+
 
 

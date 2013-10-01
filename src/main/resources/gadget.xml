@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
     <ModulePrefs
--            title="Build Status"
--            author="Vlastimil Eliֳ¡ֵ¡"
--            author_email="velias@redhat.com"
--            description="This gadget allows to show status of defined build from Jenkins/Hudson server."
--            screenshot="__ATLASSIAN_BASE_URL__/download/resources/org.jboss.jira.plugin.build-gadgets/thumbnails/screenshot.png"
--            thumbnail="__ATLASSIAN_BASE_URL__/download/resources/org.jboss.jira.plugin.build-gadgets/thumbnails/thumbnail.png">
--        
+--            title="Build Status"
+--            author="Vlastimil Eliײ³ֲ¡ײµֲ¡"
+--            author_email="velias@redhat.com"
+--            description="This gadget allows to show status of defined build from Jenkins/Hudson server."
+--            screenshot="__ATLASSIAN_BASE_URL__/download/resources/org.jboss.jira.plugin.build-gadgets/thumbnails/screenshot.png"
+--            thumbnail="__ATLASSIAN_BASE_URL__/download/resources/org.jboss.jira.plugin.build-gadgets/thumbnails/thumbnail.png">
+
     <Require feature="views" />
     <Require feature="dynamic-height" />
     <Require feature="settitle" />
@@ -23,9 +23,8 @@
     </ModulePrefs>
     <UserPref name="JenkinsJobName" display_name="Jenkins/Hudson Job name" datatype="string" required="true" default_value="JobName"/>
     <UserPref name="JenkinsURL" display_name="Jenkins/Hudson server URL" datatype="string" default_value="Jenkins Server Name" />
-    <UserPref name="last_job_details" display_name="Load last build details" datatype="bool" default_value="true"/>
-    <UserPref name="last_job_details_changeset" display_name="Show last build details changeset" datatype="bool" default_value="true" />
-    <UserPref name="refreshinterval" display_name="Refresh interval" datatype="enum" default_value="" />
+    <UserPref name="LastJobDetails" datatype="bool" default_value="false" />
+    <UserPref name="LastJobDetailsChangeSet" datatype="bool" default_value="false" />
     <UserPref name="isConfigured" datatype="hidden" default_value="false" />
     <UserPref name="refresh" datatype="hidden" default_value="true" />
 
@@ -37,32 +36,26 @@
     #requireResource("com.atlassian.plugins.psp.jira-jenkins-gadget:jira-jenkins-gadget-resources")
     #includeResources()
 
-     <div id='wrapper' style="display: block">
-            <div id='jobtitle' style="display: none" width='100%' align='center'></div>
-            <div id='jobdetails' style="display: none" width='100%'></div>
-            <div id='lastjobdetails' style="display: none" width='100%'></div>
-            <div id='gupdated' style="display: none" width='100%'></div>
-     </div>
+        <div id='wrapper' >
+            <div id='jobtitle' width='100%' align='center'></div>
+            <div id='jobdetails' width='100%'></div>
+            <div id='lastjobdetails' width='100%'></div>
+            <div id='gupdated' width='100%'></div>
+        </div>
 
 <script type="text/javascript">
-    var prefs = new gadgets.Prefs();
+
     var gadget = AJS.Gadget({
+
+
+
     baseUrl: "__ATLASSIAN_BASE_URL__",
     useOauth: "/rest/gadget/1.0/currentUser",
     config: {
         descriptor: function(args){
-        var gadget = this;
-
-    function hideSections() {
-      var sections = [ 'wrapper', 'jobtitle', 'jobdetails', 'lastjobdetails', 'gupdated' ];
-      for (var i=0; i < sections.length; ++i) {
-        var s = sections[i];
-        var el = document.getElementById(s);
-        el.style.display = "none";
-      }
-    };
-
-        hideSections();
+            var gadget = this;
+            var el = document.getElementById('wrapper');
+            el.style.display = "none";
             return {
                 action: "/rest/gadget/1.0/currentUser",
                 theme: function ()
@@ -91,62 +84,45 @@
 						value: gadget.getPref("JenkinsJobName")
 				   },
 				   {
-				        userpref: "last_job_details",
-                        label: "Show last job details",
-                        description:"&nbsp  ",
-                        type: "checkbox",
-                        options:[{
+                                    type: "checkbox",
                                     label: "",
-                                    selected : prefs.getBool("last_job_details"),
-                                }]
+                                    options: [{id: 1, label: " Show last job details "}],
+                                    userpref: "LastJobDetails",
+                                    value: gadget.getPref("LastJobDetails")
                    },
                    {
-                        userpref: "last_job_details_changeset",
-                        label: "Show last job changeset",
-                        description:"&nbsp  ",
-                        type: "checkbox",
-                        options:[{
+                                    type: "checkbox",
                                     label: "",
-                                    selected:  prefs.getBool("last_job_details_changeset"),
-                                }]
+                                    options: [{id: 1, label: " Show changeset "}],
+                                    userpref: "LastJobDetailsChangeSet",
+                                    value: gadget.getPref("LastJobDetailsChangeSet")
                    },
-                   AJS.gadget.fields.nowConfigured()
+				   AJS.gadget.fields.nowConfigured()
 
                 ]
             };
         },
+
     },
     view: {
 
         enableReload: true,
         onResizeReload: true,
-
         template: function (args) {
 
         var gadget = this;
         var jobname = gadget.getPref("JenkinsJobName");
+
         gadget.getView().empty();
 
         if (jobname && jobname.length > 0 ){
-            gadgets.window.setTitle("Build Status - " + gadget.getPref("JenkinsJobName"));
+            gadgets.window.setTitle("Build Status - " + jobname);
             var color;
-            showSections();
+            var el = document.getElementById('wrapper');
+            el.style.display = "block";
             makeJSONRequest(jenkinsJobURL(gadget),responseMain);
-
         };
-
-    function showSections() {
-      var sections = [ 'wrapper', 'jobtitle', 'jobdetails', 'lastjobdetails', 'gupdated' ];
-      for (var i=0; i < sections.length; ++i) {
-        var s = sections[i];
-        var el = document.getElementById(s);
-        el.style.display = "block";
-       }
-    };
-
-
-
-}
+    },
 
     }
 });
