@@ -10,7 +10,12 @@
         <Require feature="views" />
         <Require feature="dynamic-height" />
         <Require feature="settitle" />
-        <Require feature="setprefs" />
+        <Require feature="setprefs"/>
+        <Optional feature="atlassian.util" />
+        <Optional feature="auth-refresh" />
+        <Require feature="oauthpopup" />
+        #supportedLocales("gadget.common,gadget.user.activity")
+        #oauth
         <Optional feature="gadget-directory">
             <Param name="categories">Other</Param>
         </Optional>
@@ -28,8 +33,13 @@
       <EnumValue value="15" display_value="15 minutes"/>
       <EnumValue value="30" display_value="30 minutes"/>
     </UserPref>
-    <Content type="html"><![CDATA[<style type="text/css">
+    <UserPref name="isConfigured" datatype="hidden" default_value="false" />
+    <Content type="html" view="profile,canvas,home"><![CDATA[
+#requireResource("com.atlassian.jira.gadgets:common")
+#requireResource("com.atlassian.gadgets.publisher:ajs-gadgets")
+#includeResources()
 
+<style type="text/css">
   #wrapper {
     margin: 5px 10px 0px 10px;
   }
@@ -121,18 +131,21 @@
 <script type='text/javascript'>
   var prefs = new gadgets.Prefs();
 
-  function init() {
-    var jobname = prefs.getString("jenkins_job_name");
-    if (jobname && jobname.length > 0 ){
-      document.getElementById('jobtitle').innerHTML = "<div class='jobtitleInner'>"+getJobTitleHTML()+"</div>";
-      gadgets.window.setTitle("Build Status - " + prefs.getString("jenkins_job_name"));
-      gadgets.window.adjustHeight();
-      makeMainJSONRequest();
-    } else {
-      document.getElementById('jobdetails').innerHTML = "Configure Jenkins/Hudson job name in gadget preferences please. Look for job name at Jenkins/Hudson server (eg. <a target='_blank' href='http://hudson.jboss.org/hudson'>http://hudson.jboss.org/hudson</a>), job name is something like <code>as7-master-build</code> or <code>jbosstools-4.0_trunk.component--ws</code> etc.";
-      gadgets.window.adjustHeight();
-    }
-  }
+// next code is disabled as we use AJS.Gadget now to make it configurable in JIRA 6
+//  function init() {
+//    var jobname = prefs.getString("jenkins_job_name");
+//    if (jobname && jobname.length > 0 ){
+//      document.getElementById('jobtitle').innerHTML = "<div class='jobtitleInner'>"+getJobTitleHTML()+"</div>";
+//      gadgets.window.setTitle("Build Status - " + prefs.getString("jenkins_job_name"));
+//      gadgets.window.adjustHeight();
+//      makeMainJSONRequest();
+//    } else {
+//      document.getElementById('jobdetails').innerHTML = "Configure Jenkins/Hudson job name in gadget preferences please. Look for job name at Jenkins/Hudson server (eg. <a target='_blank' href='http://hudson.jboss.org/hudson'>http://hudson.jboss.org/hudson</a>), job name is something like <code>as7-master-build</code> or <code>jbosstools-4.0_trunk.component--ws</code> etc.";
+//      gadgets.window.adjustHeight();
+//    }
+//  }
+//
+//  gadgets.util.registerOnLoadHandler(init);
   
   function makeMainJSONRequest() {
     makeJSONRequest(getJobURL(),responseMain);
@@ -239,7 +252,103 @@
        return "--";  
   }
   
-  gadgets.util.registerOnLoadHandler(init);
+  var gadget = AJS.Gadget({
+    baseUrl: "__ATLASSIAN_BASE_URL__",
+    useOauth: "/rest/gadget/1.0/currentUser",
+    config: {
+      descriptor: function(args){
+        var gadget = this;
+        return {
+          action: "/rest/gadget/1.0/currentUser",
+          theme: function ()
+          {
+            if (gadgets.window.getViewportDimensions().width < 450) {
+              return "gdt top-label";
+            } else {
+              return "gdt";
+            }
+          }(),
+          fields:[
+            {
+              userpref: "jenkins_url",
+              label: "Jenkins URL: ",
+              description: "Base URL of Jenkins or Hudson server.",
+              type: "text",
+              value: gadget.getPref("jenkins_url")
+            },
+            {
+              userpref: "jenkins_job_name",
+              label: "Jenkins Job Name: ",
+              description: "Name of Job you can show status for.",
+              type: "text",
+              value: gadget.getPref("jenkins_job_name")
+            },
+            {
+              type: "checkbox",
+              label: "",
+              options: [{id: 1, label: " Show last job details "}],
+              userpref: "last_job_details",
+              value: gadget.getPref("last_job_details")
+            },
+            {
+              type: "checkbox",
+              label: "",
+              options: [{id: 1, label: " Show changeset "}],
+              userpref: "last_job_details_changeset",
+              value: gadget.getPref("last_job_details_changeset")
+            },
+            {
+              userpref: "refreshinterval",
+              label: "Refresh interval",
+              description: "If and how often is build status refreshed automatically.",
+              type: "select",
+              selected: gadget.getPref("refreshinterval"),
+              options:[
+                {
+                  label: "Never",
+                  value: ""
+                },
+                {
+                  label: "1 minute",
+                  value: "1"
+                },{
+                  label: "2 minutes",
+                  value: "2"
+                },{
+                  label: "5 minutes",
+                  value: "5"
+                },{
+                  label: "10 minutes",
+                  value: "10"
+                },{
+                  label: "15 minutes",
+                  value: "15"
+                },{
+                  label: "30 minutes",
+                  value: "30"
+                }
+              ]
+            },
+            AJS.gadget.fields.nowConfigured()
+          ]
+        };
+      },    
+    },
+    view: {
+      enableReload: false,
+      onResizeReload: true,
+      template: function (args) {
+        var gadget = this;
+        var jobname = gadget.getPref("jenkins_job_name");
+        gadget.getView().empty();
+        if (jobname && jobname.length > 0 ){
+          gadgets.window.setTitle("Build Status - " + jobname);
+          makeMainJSONRequest();
+        };
+      },
+    
+    }
+  });
 
 </script>]]></Content>
 </Module>

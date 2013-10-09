@@ -32,6 +32,9 @@ http://www.gnu.org/licenses/lgpl-2.1-standalone.html
 Changelog
 -------------
 
+1.6 - 2013-10-09
+* workaround to make gadget configurable in JIRA 6
+
 1.5 - 2013-08-13
 * #4 enhancement - Automatic build status refresh every X minutes may be set in gadget options. 
 
