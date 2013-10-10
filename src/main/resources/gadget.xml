@@ -2,7 +2,7 @@
 <Module>
     <ModulePrefs
             title="Build Status"
-            author="Vlastimil Eliáš"
+            author="Vlastimil Elias"
             author_email="velias@redhat.com"
             description="This gadget allows to show status of defined build from Jenkins/Hudson server."
             screenshot="__ATLASSIAN_BASE_URL__/download/resources/org.jboss.jira.plugin.build-gadgets/thumbnails/screenshot.png"
@@ -20,11 +20,12 @@
             <Param name="categories">Other</Param>
         </Optional>
     </ModulePrefs>
-    <UserPref name="jenkins_job_name" display_name="Jenkins/Hudson Job name" datatype="string" required="true" />
-    <UserPref name="jenkins_url" display_name="Jenkins/Hudson server URL (default hudson.jboss.org)" datatype="string" default_value="http://hudson.jboss.org/hudson" />
-    <UserPref name="last_job_details" display_name="Load last build details" datatype="bool" default_value="false"/>
-    <UserPref name="last_job_details_changeset" display_name="Show last build details changeset" datatype="bool" default_value="false"/>
-    <UserPref name="refreshinterval" display_name="Refresh interval" datatype="enum" default_value="">
+    <!-- All prefs are hidden because we use AJS.Gadget now which allows configuration even on JIRA 6 -->
+    <UserPref name="jenkins_job_name" display_name="Jenkins/Hudson Job name" datatype="hidden" required="true" />
+    <UserPref name="jenkins_url" display_name="Jenkins/Hudson server URL (default hudson.jboss.org)" datatype="hidden" default_value="http://hudson.jboss.org/hudson" />
+    <UserPref name="last_job_details" display_name="Load last build details" datatype="hidden" default_value="false"/>
+    <UserPref name="last_job_details_changeset" display_name="Show last build details changeset" datatype="hidden" default_value="false"/>
+    <UserPref name="refreshinterval" display_name="Refresh interval" datatype="hidden" default_value="">
       <EnumValue value="" display_value="Never"/>
       <EnumValue value="1" display_value="1 minute"/>
       <EnumValue value="2" display_value="2 minutes"/>
@@ -82,6 +83,12 @@
     background-color: #FCF8E3;
     border-color: #FBEED5;
   }
+  
+  .statusaborted, .statusaborted a {
+    color: #7D7D81;
+    background-color: #D5D5D5;
+    border-color: #B7B7B7;
+  }
     
   #jobdetails, #lastjobdetails {
     display: table;
@@ -123,7 +130,7 @@
   
 <div id='wrapper'>
     <div id='jobtitle' width='100%' align='center'></div>
-    <div id='jobdetails' width='100%'>Loading build status...</div>
+    <div id='jobdetails' width='100%'></div>
     <div id='lastjobdetails' width='100%'></div>
     <div id='gupdated' width='100%'></div>
 </div>
@@ -155,7 +162,7 @@
     var params = {};
     params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
     var ts = new Date().getTime();
-    var url = baseurl + "/api/json?nocache="+Math.floor(ts / 10000);
+    var url = baseurl + "/api/json?nocache="+Math.floor(ts / 1000);
     gadgets.io.makeRequest(url, response, params);
   };
   
@@ -173,6 +180,8 @@
       document.getElementById('jobdetails').innerHTML = html;
       if (prefs.getBool("last_job_details")){
         makeJSONRequest(getJobURL()+"/"+jsondata.lastBuild.number,responseLastBuild);
+      } else {
+        document.getElementById('lastjobdetails').innerHTML = "";
       }
     } else if (obj.errors && obj.errors.length > 0) {
       document.getElementById('jobdetails').innerHTML = "Build status loading error: " + obj.errors + "<br/>Response content: " + obj.text;
@@ -272,28 +281,28 @@
             {
               userpref: "jenkins_url",
               label: "Jenkins URL: ",
-              description: "Base URL of Jenkins or Hudson server.",
+              description: "Base URL of Jenkins or Hudson server, eg. http://hudson.jboss.org/hudson",
               type: "text",
               value: gadget.getPref("jenkins_url")
             },
             {
               userpref: "jenkins_job_name",
               label: "Jenkins Job Name: ",
-              description: "Name of Job you can show status for.",
+              description: "Name of Job you want to show status for, eg. jbpm-6.0.x",
               type: "text",
               value: gadget.getPref("jenkins_job_name")
             },
             {
               type: "checkbox",
               label: "",
-              options: [{id: 1, label: " Show last job details "}],
+              options: [{id: 1, value: "true", label: " Show last build details"}],
               userpref: "last_job_details",
               value: gadget.getPref("last_job_details")
             },
             {
               type: "checkbox",
               label: "",
-              options: [{id: 1, label: " Show changeset "}],
+              options: [{id: 1, value: "true", label: " Show changeset info as part of last build details"}],
               userpref: "last_job_details_changeset",
               value: gadget.getPref("last_job_details_changeset")
             },
@@ -337,14 +346,19 @@
     view: {
       enableReload: false,
       onResizeReload: true,
+      onResizeAdjustHeight: true,
       template: function (args) {
         var gadget = this;
         var jobname = gadget.getPref("jenkins_job_name");
-        gadget.getView().empty();
         if (jobname && jobname.length > 0 ){
           gadgets.window.setTitle("Build Status - " + jobname);
+          document.getElementById('jobdetails').innerHTML = "Loading build status...";
           makeMainJSONRequest();
-        };
+        } else {
+          document.getElementById('jobtitle').innerHTML = "";
+          document.getElementById('jobdetails').innerHTML = "Configure Job name using 'Edit' item in gadget's menu please.";
+        }
+        document.getElementById('lastjobdetails').innerHTML = "";
       },
     
     }
