@@ -4,6 +4,7 @@
     <description>${project.description}</description>
     <version>${project.version}</version>
     <vendor name="${project.organization.name}" url="${project.organization.url}" />
+    <param name="atlassian-data-center-compatible">true</param>
   </plugin-info>
   
   <gadget key="build-status-gadget" location="gadget.xml"/>

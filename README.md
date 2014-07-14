@@ -32,6 +32,10 @@ http://www.gnu.org/licenses/lgpl-2.1-standalone.html
 Changelog
 -------------
 
+1.7 - 2014-07-14
+* #8 plugin marked as JIRA Data Center compatible
+* tested under JIRA 6.3
+
 1.6 - 2013-10-09
 * #5 workaround to make gadget configurable in JIRA 6 by use of Atlassian's AJS.Gadget - thanks Cyril Burd for providing the idea in #6
 
