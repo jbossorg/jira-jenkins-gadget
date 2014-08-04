@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Search for an "e" in the next paragraph:</p>
+
+<p id="p01">The best AS things AS7-12 in life ORG-3358 are (AS7-12) free AS7-g!</p>
+
+<p id="demo"></p>
+<p id="demo2"></p>
+<script>
+function linkKeys(text) {
+
+	var key_regexp = /([A-Z][A-Z|0-9]{1,20}-[0-9]+)/g;
+
+	var ret = text;
+	var matchArray = [];
+	while (match = key_regexp.exec(text)) {
+		key = match[1];
+		if(! matchArray[key]){
+			matchArray[key] = "y";
+	    ret = replaceAll(key,"<a href='/browse/"+key+"'>"+key+"</a>",ret)
+	  }    
+  }
+  return ret;
+}
+
+function replaceAll(find, replace, str) {
+  return str.replace(new RegExp(find, 'g'), replace);
+}
+
+document.getElementById("demo2").innerHTML = linkKeys(document.getElementById("p01").innerHTML);
+
+</script>
+
+</body>
+</html>

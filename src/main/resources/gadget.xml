@@ -209,7 +209,7 @@
       if (prefs.getBool("last_job_details_changeset") && jsondata.changeSet && jsondata.changeSet.items && jsondata.changeSet.items.length > 0){
         html = html + "Last build changeset: <ul>";
         for(item in jsondata.changeSet.items){
-          html = html + "<li>" + jsondata.changeSet.items[item].msg;
+          html = html + "<li>" + linkKeys(jsondata.changeSet.items[item].msg);
         }
         html = html + "</ul>";
       }  
@@ -260,6 +260,27 @@
      else
        return "--";  
   }
+  
+  function linkKeys(text) {
+
+		var key_regexp = /([A-Z][A-Z|0-9]{1,20}-[0-9]+)/g;
+	
+		var ret = text;
+		var matchArray = [];
+		while (match = key_regexp.exec(text)) {
+			key = match[1];
+			if(! matchArray[key]){
+				matchArray[key] = "y";
+		    ret = replaceAll(key,"<a href='__ATLASSIAN_BASE_URL__/browse/"+key+"'>"+key+"</a>",ret)
+		  }    
+	  }
+	  return ret;
+	}
+	
+	function replaceAll(find, replace, str) {
+	  return str.replace(new RegExp(find, 'g'), replace);
+	}
+  
   
   var gadget = AJS.Gadget({
     baseUrl: "__ATLASSIAN_BASE_URL__",

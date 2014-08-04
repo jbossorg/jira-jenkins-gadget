@@ -1,7 +1,7 @@
 'Gadget to show Jenkins/Hudson build status' JIRA plugin
 =====================================================
 
-This is a plugin for Atlassian JIRA with Gadget that allows to show status of defined build from Jenkins/Hudson server on JIRA Dashboard and other Gadget containers.
+This is a plugin for Atlassian JIRA with Gadget that allows to show status of defined build from Jenkins/Hudson server on JIRA Dashboard.
 
 Installation
 -------------
@@ -31,6 +31,9 @@ http://www.gnu.org/licenses/lgpl-2.1-standalone.html
 
 Changelog
 -------------
+
+1.8 - 2014-08-05
+* #9 jira issue keys in build changeset messages are rendered as links to the issue in jira
 
 1.7 - 2014-07-14
 * #8 plugin marked as JIRA Data Center compatible
