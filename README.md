@@ -59,7 +59,7 @@ Changelog
 
 1.1 - 2012-11-02
 * Help message for unconfigured gadget improved
-* Design improved, collors are not so aggresive
+* Design improved, collors are not so aggressive
 
 1.0 - 2012-11-01
 * first release
