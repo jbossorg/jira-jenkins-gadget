@@ -247,7 +247,19 @@
     } else {
       surl = "http://hudson.jboss.org/hudson/";
     }
-    return surl + "job/" + encodeURIComponent(prefs.getString("jenkins_job_name"));
+    
+    var jn = prefs.getString("jenkins_job_name");
+    var newjn = "";
+    if(jn && jn != ""){
+      //#11 keep slashes unencoded
+      var jnarr = jn.split("/");
+      for(i = 0; i < jnarr.length; i++){
+        if(i>0) newjn += "/";
+        newjn += encodeURIComponent(jnarr[i]);
+      }
+    }
+    
+    return surl + "job/" + newjn;
   }
    
   function getJobTitleHTML(){

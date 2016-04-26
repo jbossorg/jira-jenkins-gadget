@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.jira.plugin</groupId>
   <artifactId>build-gadgets</artifactId>
-  <version>1.8</version>
+  <version>1.9</version>
   <packaging>atlassian-plugin</packaging>
 
   <name>Gadget to show Jenkins/Hudson build status</name>

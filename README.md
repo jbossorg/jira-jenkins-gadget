@@ -31,6 +31,8 @@ http://www.gnu.org/licenses/lgpl-2.1-standalone.html
 
 Changelog
 -------------
+1.9 - 2016-04-26
+* #11 slashes in job name are not URL encoded now, so nested jobs from jenkin's build-all-branches plugin or 'CloudBees Folders Plugin' can be visualized by entering job path there. Eg. for nested job at `http://myjenkins.org/job/parentfolder/job/childjobname` you can enter `parentfolder/job/childjobname` into gadget's `Jenkins/Hudson Job name` configuration field. 
 
 1.8 - 2014-08-05
 * #9 jira issue keys in build changeset messages are rendered as links to the issue in jira
