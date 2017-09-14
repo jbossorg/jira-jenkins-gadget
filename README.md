@@ -1,16 +1,16 @@
-'Gadget to show Jenkins/Hudson build status' JIRA plugin
+'Gadget to show Jenkins/Hudson build status' Jira plugin
 =====================================================
 
-This is a plugin for Atlassian JIRA with Gadget that allows to show status of defined build from Jenkins/Hudson server on JIRA Dashboard.
+This is a plugin for Atlassian Jira with Gadget that allows to show status of defined build from Jenkins/Hudson server on Jira Dashboard.
 
 Installation
 -------------
-1. This plugin is Type 2, so it can be installed and upgraded directly over JIRA Administration GUI. It is available from [Atlassian Marketplace](https://marketplace.atlassian.com/plugins/org.jboss.jira.plugin.build-gadgets).
-2. You have to add Jenkins/Hudson server URL (eg. `http://hudson.jboss.org/*`) to the JIRA [Whitelist](https://confluence.atlassian.com/display/JIRA/Configuring+the+Whitelist) also.
+1. This plugin is Type 2, so it can be installed and upgraded directly over Jira Administration GUI. It is available from [Atlassian Marketplace](https://marketplace.atlassian.com/plugins/org.jboss.jira.plugin.build-gadgets).
+2. You have to add Jenkins/Hudson server URL (eg. `http://hudson.jboss.org/*`) to the Jira [Whitelist](https://confluence.atlassian.com/display/JIRA/Configuring+the+Whitelist) also.
 
 Gadget Use
 ----------
-For short description how to use this gadget you can see [Display jenkins build status on JIRA Dashboard and SBS pages](https://community.jboss.org/en/website/blog/2012/11/06/display-jenkins-build-results-on-jira-dashboard-and-sbs-pages) blogpost.
+For short description how to use this gadget you can see [Display jenkins build status on Jira Dashboard and SBS pages](https://community.jboss.org/en/website/blog/2012/11/06/display-jenkins-build-results-on-jira-dashboard-and-sbs-pages) blogpost.
 
 Build
 -------------
@@ -42,7 +42,7 @@ Changelog
 * tested under JIRA 6.3
 
 1.6 - 2013-10-09
-* #5 workaround to make gadget configurable in JIRA 6 by use of Atlassian's AJS.Gadget - thanks Cyril Burd for providing the idea in #6
+* #5 workaround to make gadget configurable in Jira 6 by use of Atlassian's AJS.Gadget - thanks Cyril Burd for providing the idea in #6
 
 1.5 - 2013-08-13
 * #4 enhancement - Automatic build status refresh every X minutes may be set in gadget options. 
